@@ -6,7 +6,7 @@ function App() {
     <div>
       <BrowserRouter>
         <Switch>
-          <Route path="/home" component={Dashboard} />
+          <Route path="/" component={Dashboard} />
         </Switch>
       </BrowserRouter>
     </div>

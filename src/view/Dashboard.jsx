@@ -20,7 +20,7 @@ export default class Dashboard extends Component {
             friends: [],
             pages: 0,
             currentPage: 0,
-            pageSize: 4
+            pageSize: 4,
         }
     }
 
@@ -34,7 +34,7 @@ export default class Dashboard extends Component {
     }
 
     handleAddFriend = (e) => {
-        let regex = RegExp(/^[a-zA-Z ]{3,30}$/);
+        let regex = RegExp(/^[a-zA-Z ]{3,35}$/);
         if (e.charCode === 13 && regex.test(e.target.value)) {
             addFriend(e.target.value);
             e.target.value = '';
@@ -47,11 +47,16 @@ export default class Dashboard extends Component {
         this.updateStates();
     }
 
-    handlePageClick = (index) => { this.setState({ currentPage: index }); }
+    handlePageClick = (index) => {
+        this.setState({ currentPage: index });
+    }
 
     handleDelete = (name) => {
-        deleteFriend(name);
-        this.updateStates();
+        if (window.confirm(`Are you sure, you want to remove ${name}`)) {
+            deleteFriend(name);
+            this.updateStates();
+            this.handlePageClick(0);
+        }
     }
 
     handleSearch = (name) => {
@@ -62,16 +67,18 @@ export default class Dashboard extends Component {
             friends: newList,
             pages: Math.ceil(newList.length / this.state.pageSize),
         })
+        this.handlePageClick(0);
     }
 
     handleFilter = () => {
         let newList = getData().sort((a) => {
-            return a.fav == true ? -1 : 1
+            return a.fav === true ? 1 : -1
         });
         this.setState({
-            friends: newList,
+            friends: newList.reverse(),
             pages: Math.ceil(newList.length / this.state.pageSize),
         });
+        this.handlePageClick(0);
     }
 
     render() {
@@ -81,13 +88,14 @@ export default class Dashboard extends Component {
                     <div className="dashboard__card__header">
                         Friends List
                     </div>
+                  
                     <input
                         type="text"
                         placeholder="Enter your friend's name"
                         onKeyPress={(e) => this.handleAddFriend(e)}
                         className="dashboard__input"
                     />
-
+                   
                     <input
                         type="text"
                         placeholder="Search ..."
@@ -118,6 +126,7 @@ export default class Dashboard extends Component {
                     {this.state.pages > 1 ?
                         <Pagination
                             pagesCount={this.state.pages}
+                            currentPage={this.state.currentPage}
                             handlePage={(index) => this.handlePageClick(index)}
                         /> : null}
                 </div>

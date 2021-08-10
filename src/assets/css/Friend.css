@@ -3,7 +3,7 @@
     height: 50px;
     display: flex;
     justify-content: space-evenly;
-    border-top: 1px solid gray;
+    border-top: 1px solid lightgray;
     align-items: center;
 }
 
@@ -15,6 +15,10 @@
     text-transform: capitalize;
 }
 
+.friend > button > .MuiSvgIcon-root {
+    fill: #555;
+}
+
 .friend  > button {
     height: 30px;
     width: 38px;
@@ -22,6 +26,7 @@
     background-color: #fff;
     border: 1px solid lightgray;
     outline: none;
+    cursor: pointer;
 }
 
 .friend__name >  span {

@@ -13,7 +13,10 @@ function Pagination({ pagesCount, handlePage, }) {
     return (
         <div className="pagination">
             {[...Array(pagesCount)].map((page, i) => (
-                <div className="pagination__item"
+                <div className={`${currentPage === i ?
+                    'pagination__item active' :
+                    'pagination__item'}`}
+                    key={i}
                     onClick={e => handlePageClick(e, i)}>
                     {i + 1}
                 </div>

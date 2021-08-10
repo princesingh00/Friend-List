@@ -6,10 +6,14 @@ import StarBorderOutlinedIcon from '@material-ui/icons/StarBorderOutlined';
 
 function Friend(props) {
 
-    const { name, fav, handleFav } = props;
+    const { name, fav, handleFav, handleDelete } = props;
 
     const handleFavourite = () => {
         handleFav(name);
+    }
+
+    const handleDel = () => {
+        handleDelete(name);
     }
 
     return (
@@ -19,7 +23,7 @@ function Friend(props) {
                 <span>is your friend</span>
             </div>
 
-            <button><DeleteOutlineIcon /></button>
+            <button onClick={handleDel}><DeleteOutlineIcon /></button>
             <button onClick={handleFavourite}>
                 {fav ? <StarIcon /> : <StarBorderOutlinedIcon />}
             </button>

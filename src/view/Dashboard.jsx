@@ -1,8 +1,16 @@
 import React, { Component } from 'react'
+import FilterListOutlinedIcon
+    from '@material-ui/icons/FilterListOutlined';
+
 import '../assets/css/Dashboard.css'
 import Friend from '../components/Friend'
 import Pagination from '../components/Pagination'
-import { getData, addFriend, addFavourite } from '../service/service'
+import {
+    getData,
+    addFriend,
+    addFavourite,
+    deleteFriend
+} from '../service/service'
 
 export default class Dashboard extends Component {
 
@@ -16,19 +24,18 @@ export default class Dashboard extends Component {
         }
     }
 
-    componentDidMount() {
-        this.updateStates();
-    }
+    componentDidMount() { this.updateStates(); }
 
     updateStates = () => {
         this.setState({
-            friends: getData(),
+            friends: getData().reverse(),
             pages: Math.ceil(getData().length / this.state.pageSize),
         })
     }
 
     handleAddFriend = (e) => {
-        if (e.charCode === 13) {
+        let regex = RegExp(/^[a-zA-Z ]{3,30}$/);
+        if (e.charCode === 13 && regex.test(e.target.value)) {
             addFriend(e.target.value);
             e.target.value = '';
             this.updateStates();
@@ -40,8 +47,31 @@ export default class Dashboard extends Component {
         this.updateStates();
     }
 
-    handlePageClick = (index) => {
-        this.setState({ currentPage: index });
+    handlePageClick = (index) => { this.setState({ currentPage: index }); }
+
+    handleDelete = (name) => {
+        deleteFriend(name);
+        this.updateStates();
+    }
+
+    handleSearch = (name) => {
+        let newList = getData().filter(friend => {
+            return friend.name.toLowerCase().includes(name.toLowerCase());
+        })
+        this.setState({
+            friends: newList,
+            pages: Math.ceil(newList.length / this.state.pageSize),
+        })
+    }
+
+    handleFilter = () => {
+        let newList = getData().sort((a) => {
+            return a.fav == true ? -1 : 1
+        });
+        this.setState({
+            friends: newList,
+            pages: Math.ceil(newList.length / this.state.pageSize),
+        });
     }
 
     render() {
@@ -53,9 +83,25 @@ export default class Dashboard extends Component {
                     </div>
                     <input
                         type="text"
-                        placeholder="Enter your friend name"
+                        placeholder="Enter your friend's name"
                         onKeyPress={(e) => this.handleAddFriend(e)}
+                        className="dashboard__input"
                     />
+
+                    <input
+                        type="text"
+                        placeholder="Search ..."
+                        onChange={(e) => this.handleSearch(e.target.value)}
+                        className="dashboard__search"
+                    />
+
+                    <button
+                        onClick={this.handleFilter}
+                        className="dashboard__filter"
+                    >
+                        <FilterListOutlinedIcon />
+                    </button>
+
                     {this.state.friends
                         .slice(this.state.currentPage * this.state.pageSize,
                             (this.state.currentPage + 1) * this.state.pageSize)
@@ -65,13 +111,15 @@ export default class Dashboard extends Component {
                                 name={friend.name}
                                 fav={friend.fav}
                                 handleFav={(name) => this.handleFavourite(name)}
+                                handleDelete={(name) => this.handleDelete(name)}
                             />
                         })
                     }
-                    <Pagination
-                        pagesCount={this.state.pages}
-                        handlePage={(index) => this.handlePageClick(index)}
-                    />
+                    {this.state.pages > 1 ?
+                        <Pagination
+                            pagesCount={this.state.pages}
+                            handlePage={(index) => this.handlePageClick(index)}
+                        /> : null}
                 </div>
             </div>)
     }

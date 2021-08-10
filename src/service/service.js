@@ -10,6 +10,13 @@ export function addFavourite(name) {
     localStorage.setItem("data", JSON.stringify(data));
 }
 
+export function deleteFriend(name) {
+    let data = JSON.parse(localStorage.getItem("data"));
+    let objIndex = data.findIndex((obj => obj.name === name));
+    data.splice(objIndex, 1);
+    localStorage.setItem("data", JSON.stringify(data));
+}
+
 export function addFriend(name) {
     let friends = [];
     let obj = {
@@ -17,9 +24,7 @@ export function addFriend(name) {
         fav: false
     }
     friends.push(obj);
-
     let data = JSON.parse(localStorage.getItem("data"));
-
     if (data === null)
         localStorage.setItem("data", JSON.stringify(friends));
     else {
